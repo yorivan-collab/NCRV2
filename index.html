@@ -151,10 +151,10 @@ function showToast(msg){
   toastEl._t = setTimeout(()=> toastEl.classList.remove('show'), 1600);
 }
 
-async function loadPoints(){
+function loadPoints(){
   try{
-    const res = await window.storage.get(STORAGE_KEY, false);
-    points = (res && res.value) ? JSON.parse(res.value) : [];
+    const raw = localStorage.getItem(STORAGE_KEY);
+    points = raw ? JSON.parse(raw) : [];
   }catch(e){
     points = [];
   }
@@ -167,11 +167,11 @@ function schedulePersist(){
   saveTimer = setTimeout(persist, 500);
 }
 
-async function persist(){
+function persist(){
   try{
-    await window.storage.set(STORAGE_KEY, JSON.stringify(points), false);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(points));
   }catch(e){
-    showToast('Gagal menyimpan, cek koneksi');
+    showToast('Gagal menyimpan, storage penuh/diblokir');
   }
 }
 
