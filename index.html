@@ -25,14 +25,30 @@
   header.top h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em;}
   header.top p{margin:0;color:var(--muted);font-size:13px;line-height:1.45;}
 
-  .toolbar{display:flex;gap:8px;margin:12px 0 12px;flex-wrap:wrap;}
+  .toolbar{display:flex;gap:8px;margin:0 0 10px;flex-wrap:wrap;}
   .btn{appearance:none;border:0;border-radius:12px;padding:13px 14px;font-weight:700;
     font-size:14px;cursor:pointer;font-family:inherit;min-height:46px;flex:1 1 auto;}
   .btn.primary{background:var(--ink);color:#fff;}
   .btn.primary:active{opacity:.85}
   .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--border);}
   .btn.ghost:active{background:#f1f5f9}
+  .btn.ghost.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .btn.small{padding:7px 11px;font-size:12px;min-height:34px;flex:none;}
   .btn:disabled{opacity:.4;cursor:default}
+
+  .previewPanel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s ease;
+    overflow:hidden;margin-bottom:10px;}
+  .previewPanel.open{grid-template-rows:1fr;}
+  .previewInner{overflow:hidden;min-height:0;}
+  .previewCard{background:#0f172a;border-radius:14px;padding:12px;margin-top:2px;}
+  .previewHead{display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:8px;gap:8px;}
+  .previewHead span{color:#94a3b8;font-size:11px;font-weight:800;letter-spacing:.04em;
+    text-transform:uppercase;}
+  .previewHead .btn.small{background:#1e293b;color:#fff;border:0;}
+  .previewBody{margin:0;color:#e2e8f0;font-size:13px;line-height:1.6;white-space:pre-wrap;
+    word-break:break-word;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    max-height:280px;overflow-y:auto;}
 
   .chips{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 8px;margin:0 -10px 12px;
     padding-left:10px;padding-right:10px;-ms-overflow-style:none;scrollbar-width:none;}
@@ -57,14 +73,24 @@
   .card[data-status="conform"]{border-left-color:var(--ok-fill)}
 
   .cardTop{display:flex;align-items:center;gap:4px;margin-bottom:8px;}
+  .cardNum{flex:none;width:24px;height:24px;border-radius:50%;background:#eef0f5;
+    color:var(--muted);font-size:11px;font-weight:800;display:flex;align-items:center;
+    justify-content:center;}
   .titleInput{flex:1;min-width:0;border:0;background:transparent;font-size:16px;font-weight:700;
     padding:6px 2px;font-family:inherit;color:var(--ink);}
   .titleInput::placeholder{color:#94a3b8;font-weight:600}
   .titleInput:focus{outline:none;background:#f8fafc;border-radius:8px;}
-  .delBtn{flex:none;border:0;background:transparent;color:#cbd5e1;font-size:18px;
-    width:40px;height:40px;display:flex;align-items:center;justify-content:center;
+  .iconBtn{flex:none;border:0;background:transparent;color:#94a3b8;font-size:16px;
+    width:36px;height:36px;display:flex;align-items:center;justify-content:center;
     cursor:pointer;line-height:1;border-radius:8px;}
+  .chevBtn{transition:transform .25s ease;transform:rotate(180deg);}
+  .chevBtn.open{transform:rotate(0deg);}
   .delBtn:active{color:var(--non-fill);background:#fef2f2}
+
+  .collapseWrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows .28s ease;
+    overflow:hidden;}
+  .collapseWrap.open{grid-template-rows:1fr;}
+  .collapseInner{overflow:hidden;min-height:0;padding-top:8px;}
 
   .seg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:8px;}
   .segBtn{border:1.5px solid var(--border);background:#fff;border-radius:10px;
@@ -110,7 +136,22 @@
 
   <div class="toolbar">
     <button class="btn primary" id="addBtn">+ Tambah Poin</button>
+  </div>
+  <div class="toolbar">
+    <button class="btn ghost" id="previewBtn">Pratinjau Teks</button>
     <button class="btn ghost" id="copyBtn">Salin Tidak Sesuai</button>
+  </div>
+
+  <div class="previewPanel" id="previewPanel">
+    <div class="previewInner">
+      <div class="previewCard">
+        <div class="previewHead">
+          <span>Pratinjau Teks · Live</span>
+          <button class="btn small" id="copyAllBtn">Salin Semua</button>
+        </div>
+        <pre class="previewBody" id="previewBody"></pre>
+      </div>
+    </div>
   </div>
 
   <div class="chips" id="chips"></div>
@@ -135,11 +176,15 @@ const STATUS = {
 let points = [];
 let filter = 'all';
 let saveTimer = null;
+let previewOpen = false;
 
 const listEl = document.getElementById('list');
 const chipsEl = document.getElementById('chips');
 const emptyEl = document.getElementById('emptyState');
 const toastEl = document.getElementById('toast');
+const previewPanel = document.getElementById('previewPanel');
+const previewBody = document.getElementById('previewBody');
+const previewBtn = document.getElementById('previewBtn');
 
 function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
 
@@ -213,22 +258,28 @@ function renderList(){
   emptyEl.style.display = points.length===0 ? 'block' : 'none';
   listEl.style.display = points.length===0 ? 'none' : 'flex';
 
-  listEl.innerHTML = visible.map(p => `
+  listEl.innerHTML = visible.map((p, idx) => `
     <article class="card" data-status="${p.status}" data-id="${p.id}">
       <div class="cardTop">
+        <span class="cardNum">${idx+1}</span>
         <input class="titleInput" data-field="title" placeholder="Judul poin / permintaan ke klien" value="${escapeAttr(p.title)}"/>
-        <button class="delBtn" data-action="del" title="Hapus">✕</button>
+        <button class="iconBtn chevBtn ${p.collapsed?'':'open'}" data-action="toggle" title="Lipat/Buka">⌄</button>
+        <button class="iconBtn delBtn" data-action="del" title="Hapus">✕</button>
       </div>
       <div class="seg">
         ${Object.keys(STATUS).map(s => `
           <button class="segBtn ${p.status===s?'on':''}" data-s="${s}">${STATUS[s].label}</button>
         `).join('')}
       </div>
-      <span class="fieldLabel">Catatan</span>
-      <textarea class="notes" data-field="notes" placeholder="Apa yang ditanyakan/diobservasi...">${escapeHtml(p.notes)}</textarea>
-      <span class="fieldLabel">Bukti / Evidence</span>
-      <textarea class="notes evidence" data-field="evidence" placeholder="No. dokumen, nama rekaman, foto, keterangan saksi...">${escapeHtml(p.evidence)}</textarea>
-      <div class="meta">diubah ${fmtTime(p.updatedAt)}</div>
+      <div class="collapseWrap ${p.collapsed ? '' : 'open'}">
+        <div class="collapseInner">
+          <span class="fieldLabel">Catatan</span>
+          <textarea class="notes" data-field="notes" placeholder="Apa yang ditanyakan/diobservasi...">${escapeHtml(p.notes)}</textarea>
+          <span class="fieldLabel">Bukti / Evidence</span>
+          <textarea class="notes evidence" data-field="evidence" placeholder="No. dokumen, nama rekaman, foto, keterangan saksi...">${escapeHtml(p.evidence)}</textarea>
+          <div class="meta">diubah ${fmtTime(p.updatedAt)}</div>
+        </div>
+      </div>
     </article>
   `).join('');
 
@@ -236,16 +287,27 @@ function renderList(){
     const id = card.dataset.id;
     card.querySelector('[data-field="title"]').addEventListener('input', e=>{
       updatePoint(id, { title: e.target.value }, false);
+      renderPreview();
     });
     card.querySelector('[data-field="notes"]').addEventListener('input', e=>{
       updatePoint(id, { notes: e.target.value }, false);
+      renderPreview();
     });
     card.querySelector('[data-field="evidence"]').addEventListener('input', e=>{
       updatePoint(id, { evidence: e.target.value }, false);
+      renderPreview();
     });
     card.querySelector('[data-action="del"]').addEventListener('click', ()=>{
       points = points.filter(p => p.id !== id);
       renderChips(); renderList(); schedulePersist();
+    });
+    card.querySelector('[data-action="toggle"]').addEventListener('click', ()=>{
+      const wrap = card.querySelector('.collapseWrap');
+      const chev = card.querySelector('.chevBtn');
+      const willOpen = !wrap.classList.contains('open');
+      wrap.classList.toggle('open', willOpen);
+      chev.classList.toggle('open', willOpen);
+      updatePoint(id, { collapsed: !willOpen }, false);
     });
     card.querySelectorAll('.segBtn').forEach(b=>{
       b.addEventListener('click', ()=>{
@@ -253,6 +315,20 @@ function renderList(){
       });
     });
   });
+
+  renderPreview();
+}
+
+function buildPreviewText(){
+  if(points.length===0) return 'Belum ada catatan.';
+  return points.map((p,i) =>
+    `${i+1}. ${p.title || '(tanpa judul)'} — ${STATUS[p.status].label}\nCatatan: ${p.notes || '-'}\nBukti: ${p.evidence || '-'}`
+  ).join('\n\n');
+}
+
+function renderPreview(){
+  if(!previewOpen) return;
+  previewBody.textContent = buildPreviewText();
 }
 
 function updatePoint(id, patch, rerender){
@@ -264,7 +340,7 @@ function updatePoint(id, patch, rerender){
 }
 
 function addPoint(){
-  const p = { id: uid(), title:'', notes:'', evidence:'', status:'pending', updatedAt: Date.now() };
+  const p = { id: uid(), title:'', notes:'', evidence:'', status:'pending', collapsed:false, updatedAt: Date.now() };
   points.unshift(p);
   filter = 'all';
   renderChips(); renderList(); schedulePersist();
@@ -293,8 +369,26 @@ async function copyNonconform(){
   }
 }
 
+async function copyAll(){
+  if(points.length===0){ showToast('Belum ada catatan'); return; }
+  try{
+    await navigator.clipboard.writeText(buildPreviewText());
+    showToast(`${points.length} poin tersalin`);
+  }catch(e){
+    showToast('Gagal menyalin, coba manual');
+  }
+}
+
 document.getElementById('addBtn').addEventListener('click', addPoint);
 document.getElementById('copyBtn').addEventListener('click', copyNonconform);
+document.getElementById('copyAllBtn').addEventListener('click', copyAll);
+previewBtn.addEventListener('click', ()=>{
+  previewOpen = !previewOpen;
+  previewPanel.classList.toggle('open', previewOpen);
+  previewBtn.classList.toggle('active', previewOpen);
+  previewBtn.textContent = previewOpen ? 'Tutup Pratinjau' : 'Pratinjau Teks';
+  if(previewOpen) renderPreview();
+});
 
 loadPoints();
 </script>
