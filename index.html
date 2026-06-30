@@ -1,3 +1,6 @@
+
+
+Catatan pemeriksaan audit · HTML
 <!doctype html>
 <html lang="id">
 <head>
@@ -20,11 +23,11 @@
   body{margin:0;background:var(--bg);color:var(--ink);overflow-x:hidden;
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,sans-serif;}
   .wrap{max-width:720px;margin:0 auto;padding:14px 10px calc(90px + env(safe-area-inset-bottom));width:100%;}
-
+ 
   header.top{padding:14px 4px 12px;}
   header.top h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em;}
   header.top p{margin:0;color:var(--muted);font-size:13px;line-height:1.45;}
-
+ 
   .toolbar{display:flex;gap:8px;margin:0 0 10px;flex-wrap:wrap;}
   .btn{appearance:none;border:0;border-radius:12px;padding:13px 14px;font-weight:700;
     font-size:14px;cursor:pointer;font-family:inherit;min-height:46px;flex:1 1 auto;}
@@ -33,9 +36,13 @@
   .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--border);}
   .btn.ghost:active{background:#f1f5f9}
   .btn.ghost.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .btn.ghost.danger{color:var(--non-ink);border-color:#fecaca;}
+  .btn.ghost.danger:active{background:var(--non-bg);}
   .btn.small{padding:7px 11px;font-size:12px;min-height:34px;flex:none;}
   .btn:disabled{opacity:.4;cursor:default}
-
+ 
+  .collapseAllRow{display:flex;justify-content:flex-end;margin-bottom:8px;}
+ 
   .previewPanel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s ease;
     overflow:hidden;margin-bottom:10px;}
   .previewPanel.open{grid-template-rows:1fr;}
@@ -49,7 +56,7 @@
   .previewBody{margin:0;color:#e2e8f0;font-size:13px;line-height:1.6;white-space:pre-wrap;
     word-break:break-word;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
     max-height:280px;overflow-y:auto;}
-
+ 
   .chips{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 8px;margin:0 -10px 12px;
     padding-left:10px;padding-right:10px;-ms-overflow-style:none;scrollbar-width:none;}
   .chips::-webkit-scrollbar{display:none}
@@ -64,14 +71,14 @@
   .chip[data-f="pending"].active{color:var(--pending-ink);border-color:var(--pending-fill);background:var(--pending-bg)}
   .chip[data-f="nonconform"].active{color:var(--non-ink);border-color:var(--non-fill);background:var(--non-bg)}
   .chip[data-f="conform"].active{color:var(--ok-ink);border-color:var(--ok-fill);background:var(--ok-bg)}
-
+ 
   .list{display:flex;flex-direction:column;gap:10px;}
   .card{background:var(--card);border:1px solid var(--border);border-radius:16px;
     padding:12px;border-left:4px solid var(--muted);overflow:hidden;}
   .card[data-status="pending"]{border-left-color:var(--pending-fill)}
   .card[data-status="nonconform"]{border-left-color:var(--non-fill)}
   .card[data-status="conform"]{border-left-color:var(--ok-fill)}
-
+ 
   .cardTop{display:flex;align-items:center;gap:4px;margin-bottom:8px;}
   .cardNum{flex:none;width:24px;height:24px;border-radius:50%;background:#eef0f5;
     color:var(--muted);font-size:11px;font-weight:800;display:flex;align-items:center;
@@ -86,12 +93,17 @@
   .chevBtn{transition:transform .25s ease;transform:rotate(180deg);}
   .chevBtn.open{transform:rotate(0deg);}
   .delBtn:active{color:var(--non-fill);background:#fef2f2}
-
+ 
   .collapseWrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows .28s ease;
     overflow:hidden;}
   .collapseWrap.open{grid-template-rows:1fr;}
   .collapseInner{overflow:hidden;min-height:0;padding-top:8px;}
-
+ 
+  .cardHint{display:none;font-size:12.5px;color:var(--muted);margin-top:4px;white-space:nowrap;
+    overflow:hidden;text-overflow:ellipsis;}
+  .cardHint.placeholder{color:#cbd5e1;font-style:italic;}
+  .card.is-collapsed .cardHint{display:block;}
+ 
   .seg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:8px;}
   .segBtn{border:1.5px solid var(--border);background:#fff;border-radius:10px;
     padding:8px 2px;font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;
@@ -100,31 +112,52 @@
   .segBtn[data-s="pending"].on{background:var(--pending-bg);border-color:var(--pending-fill);color:var(--pending-ink);}
   .segBtn[data-s="nonconform"].on{background:var(--non-bg);border-color:var(--non-fill);color:var(--non-ink);}
   .segBtn[data-s="conform"].on{background:var(--ok-bg);border-color:var(--ok-fill);color:var(--ok-ink);}
-
+ 
   .fieldLabel{font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;
     color:#94a3b8;margin:8px 0 4px 2px;display:block;}
   .fieldLabel:first-of-type{margin-top:0;}
-
+ 
   .notes{width:100%;border:1px solid var(--border);border-radius:10px;padding:10px;
-    font-family:inherit;font-size:16px;color:var(--ink);resize:vertical;min-height:54px;
+    font-family:inherit;font-size:16px;color:var(--ink);resize:none;overflow:hidden;min-height:54px;
     line-height:1.45;background:#fafbfc;}
   .notes:focus{outline:none;border-color:var(--ink);background:#fff;}
   .notes::placeholder{color:#94a3b8}
-
+ 
   .evidence{border-style:dashed;border-color:#cbd5e1;min-height:44px;background:#fcfcfd;}
   .evidence:focus{border-color:#475569;border-style:solid;}
-
+ 
   .meta{margin-top:6px;font-size:11px;color:#94a3b8;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
-
+ 
   .empty{text-align:center;padding:50px 16px;color:var(--muted);}
   .empty strong{display:block;color:var(--ink);font-size:15px;margin-bottom:4px;}
   .empty p{font-size:13px;margin:0;line-height:1.5;}
-
+ 
   .toast{position:fixed;bottom:calc(18px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(10px);
     background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;
     font-weight:600;opacity:0;transition:opacity .25s, transform .25s;pointer-events:none;
     white-space:nowrap;z-index:50;max-width:90vw;text-align:center;}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+ 
+  .fabWrap{position:fixed;right:16px;bottom:calc(86px + env(safe-area-inset-bottom));
+    z-index:60;display:flex;flex-direction:column;align-items:flex-end;gap:10px;}
+  .fabMain{width:52px;height:52px;border-radius:50%;border:0;background:var(--ink);color:#fff;
+    font-size:22px;box-shadow:0 6px 16px rgba(15,23,42,.28);cursor:pointer;
+    display:flex;align-items:center;justify-content:center;transition:transform .2s ease;
+    line-height:1;}
+  .fabMain.open{transform:rotate(45deg);}
+  .fabMenu{display:grid;grid-template-rows:0fr;transition:grid-template-rows .25s ease;
+    overflow:hidden;}
+  .fabMenu.open{grid-template-rows:1fr;}
+  .fabMenuInner{overflow:hidden;min-height:0;display:flex;flex-direction:column;
+    align-items:flex-end;gap:8px;padding-bottom:2px;}
+  .fabAction{background:#fff;border:1px solid var(--border);border-radius:999px;
+    padding:11px 16px;font-size:13.5px;font-weight:700;color:var(--ink);cursor:pointer;
+    box-shadow:0 4px 10px rgba(15,23,42,.12);white-space:nowrap;font-family:inherit;
+    min-height:40px;}
+  .fabAction:active{background:#f1f5f9;}
+  .fabFilters{display:flex;flex-direction:column;align-items:flex-end;gap:6px;
+    background:#fff;border-radius:14px;padding:8px;box-shadow:0 4px 10px rgba(15,23,42,.12);}
+  .fabFilters .chip{min-height:36px;}
 </style>
 </head>
 <body>
@@ -133,7 +166,7 @@
     <h1>Catatan Pemeriksaan Audit</h1>
     <p>Pengganti coret-coretan kertas. Tandai status, lompat ke poin lain kapan saja — semua otomatis tersimpan, jadi tidak hilang walau ditinggal lama nungguin klien cari dokumen.</p>
   </header>
-
+ 
   <div class="toolbar">
     <button class="btn primary" id="addBtn">+ Tambah Poin</button>
   </div>
@@ -141,7 +174,11 @@
     <button class="btn ghost" id="previewBtn">Pratinjau Teks</button>
     <button class="btn ghost" id="copyBtn">Salin Tidak Sesuai</button>
   </div>
-
+  <div class="toolbar">
+    <button class="btn ghost" id="saveBtn">💾 Simpan</button>
+    <button class="btn ghost danger" id="resetBtn">Reset</button>
+  </div>
+ 
   <div class="previewPanel" id="previewPanel">
     <div class="previewInner">
       <div class="previewCard">
@@ -153,18 +190,33 @@
       </div>
     </div>
   </div>
-
+ 
+  <div class="collapseAllRow">
+    <button class="btn ghost small" id="collapseAllBtn">Lipat Semua</button>
+  </div>
+ 
   <div class="chips" id="chips"></div>
-
+ 
   <div class="list" id="list"></div>
   <div class="empty" id="emptyState" style="display:none">
     <strong>Belum ada poin pemeriksaan</strong>
     <p>Tap "+ Tambah Poin" tiap kali mulai cek satu klausul atau satu permintaan ke klien.</p>
   </div>
 </div>
-
+ 
+<div class="fabWrap" id="fabWrap">
+  <div class="fabMenu" id="fabMenu">
+    <div class="fabMenuInner">
+      <div class="fabFilters" id="fabFilters"></div>
+      <button class="fabAction" id="fabTop">↑ Ke Atas</button>
+      <button class="fabAction" id="fabAdd">+ Tambah Poin</button>
+    </div>
+  </div>
+  <button class="fabMain" id="fabMain">☰</button>
+</div>
+ 
 <div class="toast" id="toast"></div>
-
+ 
 <script>
 const STORAGE_KEY = 'audit-points-v1';
 const STATUS = {
@@ -172,12 +224,12 @@ const STATUS = {
   nonconform: { label: 'Tidak Sesuai' },
   conform:    { label: 'Sesuai' },
 };
-
+ 
 let points = [];
 let filter = 'all';
 let saveTimer = null;
 let previewOpen = false;
-
+ 
 const listEl = document.getElementById('list');
 const chipsEl = document.getElementById('chips');
 const emptyEl = document.getElementById('emptyState');
@@ -185,22 +237,26 @@ const toastEl = document.getElementById('toast');
 const previewPanel = document.getElementById('previewPanel');
 const previewBody = document.getElementById('previewBody');
 const previewBtn = document.getElementById('previewBtn');
-
+const collapseAllBtn = document.getElementById('collapseAllBtn');
+const fabMain = document.getElementById('fabMain');
+const fabMenu = document.getElementById('fabMenu');
+const fabFiltersEl = document.getElementById('fabFilters');
+ 
 function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
-
+ 
 function fmtTime(ts){
   const d = new Date(ts);
   const pad = n => String(n).padStart(2,'0');
   return `${pad(d.getDate())}/${pad(d.getMonth()+1)} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
-
+ 
 function showToast(msg){
   toastEl.textContent = msg;
   toastEl.classList.add('show');
   clearTimeout(toastEl._t);
   toastEl._t = setTimeout(()=> toastEl.classList.remove('show'), 1600);
 }
-
+ 
 function loadPoints(){
   try{
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -211,12 +267,12 @@ function loadPoints(){
   renderChips();
   renderList();
 }
-
+ 
 function schedulePersist(){
   clearTimeout(saveTimer);
   saveTimer = setTimeout(persist, 500);
 }
-
+ 
 function persist(){
   try{
     localStorage.setItem(STORAGE_KEY, JSON.stringify(points));
@@ -224,13 +280,13 @@ function persist(){
     showToast('Gagal menyimpan, storage penuh/diblokir');
   }
 }
-
+ 
 function counts(){
   const c = { all: points.length, pending:0, nonconform:0, conform:0 };
   points.forEach(p => { c[p.status] = (c[p.status]||0) + 1; });
   return c;
 }
-
+ 
 function renderChips(){
   const c = counts();
   const defs = [
@@ -239,27 +295,44 @@ function renderChips(){
     {key:'nonconform', label:STATUS.nonconform.label},
     {key:'conform', label:STATUS.conform.label},
   ];
-  chipsEl.innerHTML = defs.map(d => `
+  const html = defs.map(d => `
     <button class="chip ${filter===d.key?'active':''}" data-f="${d.key}">
       ${d.key!=='all' ? '<span class="dot"></span>' : ''}${d.label} (${c[d.key]||0})
     </button>
   `).join('');
-  chipsEl.querySelectorAll('.chip').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      filter = btn.dataset.f;
-      renderChips();
-      renderList();
+  chipsEl.innerHTML = html;
+  fabFiltersEl.innerHTML = html;
+  [chipsEl, fabFiltersEl].forEach(container=>{
+    container.querySelectorAll('.chip').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        filter = btn.dataset.f;
+        renderChips();
+        renderList();
+        closeFabMenu();
+      });
     });
   });
+  updateCollapseAllLabel();
 }
-
+ 
+function closeFabMenu(){
+  fabMenu.classList.remove('open');
+  fabMain.classList.remove('open');
+}
+ 
+function updateCollapseAllLabel(){
+  if(points.length===0){ collapseAllBtn.textContent = 'Lipat Semua'; return; }
+  const allCollapsed = points.every(p => p.collapsed);
+  collapseAllBtn.textContent = allCollapsed ? 'Buka Semua' : 'Lipat Semua';
+}
+ 
 function renderList(){
   const visible = points.filter(p => filter==='all' ? true : p.status===filter);
   emptyEl.style.display = points.length===0 ? 'block' : 'none';
   listEl.style.display = points.length===0 ? 'none' : 'flex';
-
+ 
   listEl.innerHTML = visible.map((p, idx) => `
-    <article class="card" data-status="${p.status}" data-id="${p.id}">
+    <article class="card ${p.collapsed?'is-collapsed':''}" data-status="${p.status}" data-id="${p.id}">
       <div class="cardTop">
         <span class="cardNum">${idx+1}</span>
         <input class="titleInput" data-field="title" placeholder="Judul poin / permintaan ke klien" value="${escapeAttr(p.title)}"/>
@@ -271,30 +344,47 @@ function renderList(){
           <button class="segBtn ${p.status===s?'on':''}" data-s="${s}">${STATUS[s].label}</button>
         `).join('')}
       </div>
+      ${(()=>{ const empty = !p.notes; return `<div class="cardHint ${empty?'placeholder':''}">${escapeHtml(empty ? 'Hasil tanya jawab/observasi...' : p.notes)}</div>`; })()}
       <div class="collapseWrap ${p.collapsed ? '' : 'open'}">
         <div class="collapseInner">
-          <span class="fieldLabel">Catatan</span>
-          <textarea class="notes" data-field="notes" placeholder="Apa yang ditanyakan/diobservasi...">${escapeHtml(p.notes)}</textarea>
-          <span class="fieldLabel">Bukti / Evidence</span>
+          <span class="fieldLabel">Rencana Periksa</span>
+          <textarea class="notes plan" data-field="plan" placeholder="Apa yang mau ditanyakan/dicek...">${escapeHtml(p.plan)}</textarea>
+          <span class="fieldLabel">Catatan Periksa</span>
+          <textarea class="notes" data-field="notes" placeholder="Hasil tanya jawab/observasi...">${escapeHtml(p.notes)}</textarea>
+          <span class="fieldLabel">Evidence Pemeriksaan</span>
           <textarea class="notes evidence" data-field="evidence" placeholder="No. dokumen, nama rekaman, foto, keterangan saksi...">${escapeHtml(p.evidence)}</textarea>
           <div class="meta">diubah ${fmtTime(p.updatedAt)}</div>
         </div>
       </div>
     </article>
   `).join('');
-
+ 
   listEl.querySelectorAll('.card').forEach(card => {
     const id = card.dataset.id;
+    card.querySelectorAll('.notes').forEach(autoGrow);
     card.querySelector('[data-field="title"]').addEventListener('input', e=>{
       updatePoint(id, { title: e.target.value }, false);
       renderPreview();
     });
+    card.querySelector('[data-field="plan"]').addEventListener('input', e=>{
+      updatePoint(id, { plan: e.target.value }, false);
+      autoGrow(e.target);
+      renderPreview();
+    });
     card.querySelector('[data-field="notes"]').addEventListener('input', e=>{
       updatePoint(id, { notes: e.target.value }, false);
+      autoGrow(e.target);
+      const hint = card.querySelector('.cardHint');
+      if(hint){
+        const empty = !e.target.value;
+        hint.textContent = empty ? 'Hasil tanya jawab/observasi...' : e.target.value;
+        hint.classList.toggle('placeholder', empty);
+      }
       renderPreview();
     });
     card.querySelector('[data-field="evidence"]').addEventListener('input', e=>{
       updatePoint(id, { evidence: e.target.value }, false);
+      autoGrow(e.target);
       renderPreview();
     });
     card.querySelector('[data-action="del"]').addEventListener('click', ()=>{
@@ -307,7 +397,9 @@ function renderList(){
       const willOpen = !wrap.classList.contains('open');
       wrap.classList.toggle('open', willOpen);
       chev.classList.toggle('open', willOpen);
+      card.classList.toggle('is-collapsed', !willOpen);
       updatePoint(id, { collapsed: !willOpen }, false);
+      updateCollapseAllLabel();
     });
     card.querySelectorAll('.segBtn').forEach(b=>{
       b.addEventListener('click', ()=>{
@@ -315,22 +407,27 @@ function renderList(){
       });
     });
   });
-
+ 
   renderPreview();
 }
-
+ 
+function autoGrow(el){
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
+ 
 function buildPreviewText(){
   if(points.length===0) return 'Belum ada catatan.';
   return points.map((p,i) =>
-    `${i+1}. ${p.title || '(tanpa judul)'} — ${STATUS[p.status].label}\nCatatan: ${p.notes || '-'}\nBukti: ${p.evidence || '-'}`
+    `${i+1}. ${p.title || '(tanpa judul)'} — ${STATUS[p.status].label}\nRencana: ${p.plan || '-'}\nCatatan: ${p.notes || '-'}\nBukti: ${p.evidence || '-'}`
   ).join('\n\n');
 }
-
+ 
 function renderPreview(){
   if(!previewOpen) return;
   previewBody.textContent = buildPreviewText();
 }
-
+ 
 function updatePoint(id, patch, rerender){
   const p = points.find(x => x.id === id);
   if(!p) return;
@@ -338,9 +435,9 @@ function updatePoint(id, patch, rerender){
   if(rerender){ renderChips(); renderList(); }
   schedulePersist();
 }
-
+ 
 function addPoint(){
-  const p = { id: uid(), title:'', notes:'', evidence:'', status:'pending', collapsed:false, updatedAt: Date.now() };
+  const p = { id: uid(), title:'', plan:'', notes:'', evidence:'', status:'pending', collapsed:false, updatedAt: Date.now() };
   points.unshift(p);
   filter = 'all';
   renderChips(); renderList(); schedulePersist();
@@ -349,18 +446,18 @@ function addPoint(){
     if(first) first.focus();
   });
 }
-
+ 
 function escapeHtml(str){
   return (str||'').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 }
 function escapeAttr(str){
   return (str||'').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 }
-
+ 
 async function copyNonconform(){
   const items = points.filter(p => p.status==='nonconform');
   if(items.length===0){ showToast('Belum ada yang Tidak Sesuai'); return; }
-  const text = items.map((p,i) => `${i+1}. ${p.title || '(tanpa judul)'}\nCatatan: ${p.notes || '-'}\nBukti: ${p.evidence || '-'}`).join('\n\n');
+  const text = items.map((p,i) => `${i+1}. ${p.title || '(tanpa judul)'}\nRencana: ${p.plan || '-'}\nCatatan: ${p.notes || '-'}\nBukti: ${p.evidence || '-'}`).join('\n\n');
   try{
     await navigator.clipboard.writeText(text);
     showToast(`${items.length} poin tersalin`);
@@ -368,7 +465,7 @@ async function copyNonconform(){
     showToast('Gagal menyalin, coba manual');
   }
 }
-
+ 
 async function copyAll(){
   if(points.length===0){ showToast('Belum ada catatan'); return; }
   try{
@@ -378,10 +475,47 @@ async function copyAll(){
     showToast('Gagal menyalin, coba manual');
   }
 }
-
+ 
 document.getElementById('addBtn').addEventListener('click', addPoint);
 document.getElementById('copyBtn').addEventListener('click', copyNonconform);
 document.getElementById('copyAllBtn').addEventListener('click', copyAll);
+document.getElementById('saveBtn').addEventListener('click', ()=>{
+  clearTimeout(saveTimer);
+  persist();
+  showToast('Tersimpan ✓');
+});
+collapseAllBtn.addEventListener('click', ()=>{
+  if(points.length===0) return;
+  const allCollapsed = points.every(p => p.collapsed);
+  const next = !allCollapsed;
+  points.forEach(p => { p.collapsed = next; p.updatedAt = Date.now(); });
+  renderList();
+  schedulePersist();
+  updateCollapseAllLabel();
+});
+fabMain.addEventListener('click', ()=>{
+  fabMenu.classList.toggle('open');
+  fabMain.classList.toggle('open');
+});
+document.getElementById('fabAdd').addEventListener('click', ()=>{
+  addPoint();
+  closeFabMenu();
+});
+document.getElementById('fabTop').addEventListener('click', ()=>{
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  closeFabMenu();
+});
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  if(points.length===0){ showToast('Sudah kosong'); return; }
+  const ok = confirm(`Hapus semua ${points.length} poin? Tindakan ini tidak bisa dibatalkan.`);
+  if(!ok) return;
+  points = [];
+  filter = 'all';
+  renderChips();
+  renderList();
+  persist();
+  showToast('Semua poin dihapus');
+});
 previewBtn.addEventListener('click', ()=>{
   previewOpen = !previewOpen;
   previewPanel.classList.toggle('open', previewOpen);
@@ -389,8 +523,9 @@ previewBtn.addEventListener('click', ()=>{
   previewBtn.textContent = previewOpen ? 'Tutup Pratinjau' : 'Pratinjau Teks';
   if(previewOpen) renderPreview();
 });
-
+ 
 loadPoints();
 </script>
 </body>
 </html>
+ 
